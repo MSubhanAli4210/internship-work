@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "../../components/ui/sidebar";
-import { ChevronUp, LayoutDashboard, Settings, User } from "lucide-react";
+import { BanknoteArrowDown, ChevronUp, LayoutDashboard, Receipt, Settings, User, Wallet} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,30 +54,43 @@ export function AppSidebar() {
               {!collapsed && <span>Dashboard</span>}
             </SidebarGroupContent>
           </NavLink>
-          <NavLink to="/profile">
+          <NavLink to="/deposit">
             <SidebarGroupContent
               className={cn(
                 "flex items-center gap-3 p-2 rounded-md  transition",
-                active === "/profile"
+                active === "/deposit"
                   ? "bg-black text-white"
                   : "hover:bg-gray-400 hover:text-white"
               )}
             >
-              <User size={20} />
-              {!collapsed && <span>My profile</span>}
+              <BanknoteArrowDown size={20} />
+              {!collapsed && <span>Deposite</span>}
             </SidebarGroupContent>
           </NavLink>
-          <NavLink to="/settings">
+          <NavLink to="/withdraw">
             <SidebarGroupContent
               className={cn(
                 "flex items-center gap-3 p-2 rounded-md  transition",
-                active === "/settings"
+                active === "/withdraw"
                   ? "bg-black text-white"
                   : "hover:bg-gray-400 hover:text-white"
               )}
             >
-              <Settings size={20} />
-              {!collapsed && <span>Settings</span>}
+              <Wallet size={20} />
+              {!collapsed && <span>Withdraw</span>}
+            </SidebarGroupContent>
+          </NavLink>
+          <NavLink to="/expenses">
+            <SidebarGroupContent
+              className={cn(
+                "flex items-center gap-3 p-2 rounded-md  transition",
+                active === "/expenses"
+                  ? "bg-black text-white"
+                  : "hover:bg-gray-400 hover:text-white"
+              )}
+            >
+              <Receipt size={20} />
+              {!collapsed && <span>Expenses</span>}
             </SidebarGroupContent>
           </NavLink>
         </SidebarGroup>
