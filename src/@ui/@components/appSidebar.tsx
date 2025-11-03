@@ -30,7 +30,7 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className={cn("transition-all duration-300", collapsed ? "w-10" : "w-64")}
+      className="transition-all duration-300"
     >
       <SidebarHeader
         className={!collapsed ? "flex flex-row justify-between" : ""}
@@ -43,11 +43,11 @@ export function AppSidebar() {
           <NavLink to="/dashboard">
             <SidebarGroupContent
               className={cn(
-                "flex items-center gap-3 p-2 rounded-md  transition",
+                "flex items-center gap-3 p-2 rounded-md  transition"
+                ,
                 active === "/dashboard"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white",
-                collapsed && "justify-center"
+                  : "hover:bg-gray-400 hover:text-white"
               )}
             >
               <LayoutDashboard size={20} />
@@ -60,8 +60,7 @@ export function AppSidebar() {
                 "flex items-center gap-3 p-2 rounded-md  transition",
                 active === "/profile"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white",
-                collapsed && "justify-center"
+                  : "hover:bg-gray-400 hover:text-white"
               )}
             >
               <User size={20} />
@@ -74,8 +73,7 @@ export function AppSidebar() {
                 "flex items-center gap-3 p-2 rounded-md  transition",
                 active === "/settings"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white",
-                collapsed && "justify-center"
+                  : "hover:bg-gray-400 hover:text-white"
               )}
             >
               <Settings size={20} />
@@ -99,7 +97,7 @@ export function AppSidebar() {
                 side={collapsed ? "right" : "top"}
                 className={cn(
                   "w-50 p-5 rounded-2xl bg-gray-100 self-left shadow-md ",
-                  collapsed && "mb-15 ml-3"
+                  collapsed && "mb-12 ml-1 w-auto"
                 )}
               >
                 <NavLink to="/profile">
@@ -108,8 +106,7 @@ export function AppSidebar() {
                       "flex items-center gap-3 p-2 rounded-md  transition text-xs w-full",
                       active === "/profile"
                         ? "bg-black text-white"
-                        : "hover:bg-gray-400 hover:text-white",
-                      collapsed && "justify-center"
+                        : "hover:bg-gray-400 hover:text-white"
                     )}
                   >
                     <User size={20} />
@@ -122,8 +119,7 @@ export function AppSidebar() {
                       "flex items-center gap-3 p-2 rounded-md  transition text-xs w-full",
                       active === "/settings"
                         ? "bg-black text-white"
-                        : "hover:bg-gray-400 hover:text-white",
-                      collapsed && "justify-center"
+                        : "hover:bg-gray-400 hover:text-white"
                     )}
                   >
                     <Settings size={20} />
