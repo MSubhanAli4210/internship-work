@@ -15,7 +15,6 @@ export function AppDashboard() {
           p-4
           bg-gray-100
           rounded-md
-          sm:pl-0
           md:w-full
         "
       >
