@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "../../components/ui/sidebar";
-import { BanknoteArrowDown, ChevronUp, LayoutDashboard, Receipt, Settings, User, Wallet} from "lucide-react";
+import { BanknoteArrowUp , ChevronUp, CircleDollarSign, LayoutDashboard, Settings, User, Wallet} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,8 +63,8 @@ export function AppSidebar() {
                   : "hover:bg-gray-400 hover:text-white"
               )}
             >
-              <BanknoteArrowDown size={20} />
-              {!collapsed && <span>Deposite</span>}
+              <BanknoteArrowUp size={20} />
+              {!collapsed && <span>Deposit</span>}
             </SidebarGroupContent>
           </NavLink>
           <NavLink to="/withdraw">
@@ -89,7 +89,7 @@ export function AppSidebar() {
                   : "hover:bg-gray-400 hover:text-white"
               )}
             >
-              <Receipt size={20} />
+              <CircleDollarSign size={20} />
               {!collapsed && <span>Expenses</span>}
             </SidebarGroupContent>
           </NavLink>

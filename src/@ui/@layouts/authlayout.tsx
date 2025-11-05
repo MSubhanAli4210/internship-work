@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { SidebarProvider, SidebarTrigger} from "../../components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import { AppSidebar } from "../@components/appSidebar";
 
 export function AuthLayout() {
@@ -12,10 +12,21 @@ export function AuthLayout() {
         "
       >
         <SidebarProvider>
-          
           <AppSidebar />
-          <SidebarTrigger className=" sm:block md:hidden" />
-          <main className="w-full md:p-10  p-10 pl-4">
+          <SidebarTrigger
+            className="
+              absolute top-1 left-1
+              sm:block
+              md:hidden
+            "
+          />
+          <main
+            className="
+              w-full
+              p-5 pt-10
+              md:p-10
+            "
+          >
             <Outlet />
           </main>
         </SidebarProvider>

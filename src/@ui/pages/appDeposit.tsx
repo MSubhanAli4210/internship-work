@@ -5,14 +5,13 @@ function AppDeposit() {
      return (
         <><div 
         className="
-              w-[90%] min-h-155
+              w-full min-h-155
               p-4
               bg-gray-100
               rounded-md
-              md:w-full
             "
         ><h1 className="font-bold m-2">Deposit</h1>
-          <AppTable />
+          <AppTable endpoint="" />
           </div>
         </>
       );
