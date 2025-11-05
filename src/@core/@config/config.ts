@@ -1,0 +1,1 @@
+export let serverUrl:string ="https://jsonplaceholder.typicode.com"; 
