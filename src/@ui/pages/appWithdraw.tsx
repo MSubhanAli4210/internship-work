@@ -11,7 +11,7 @@ function AppWithdraw() {
               rounded-md
             "
         >   <h1 className="font-bold m-2">Withdraw</h1>
-          <AppTable endpoint="" />
+          <AppTable />
           </div>
         </>
       );
