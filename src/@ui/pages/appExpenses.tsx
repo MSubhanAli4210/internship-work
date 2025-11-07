@@ -13,7 +13,7 @@ function AppExpenses() {
         "
       >
         <h1 className="font-bold m-2">Expenses</h1>
-        <AppTable endpoint="" />
+        <AppTable />
       </div>
     </>
   );

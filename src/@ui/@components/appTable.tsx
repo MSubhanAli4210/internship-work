@@ -41,7 +41,7 @@ import {
   TableRow,
 } from "../../components/ui/table";
 
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type Payment = {
   id: string;
@@ -79,6 +79,35 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
+  {
+    accessorKey: "id",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="
+            cursor-pointer
+          "
+        >
+          ID
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    // header: "User ID",
+    cell: ({ row }) => (
+      <div
+        className="
+          capitalize
+        "
+      >
+        {row.getValue("id")}
+      </div>
+    ),
+  },
+
   {
     accessorKey: "status",
     header: "Status",
@@ -94,20 +123,8 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="
-            cursor-pointer
-          "
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      );
-    },
+    header:"Email",
+
     cell: ({ row }) => (
       <div
         className="
@@ -185,12 +202,13 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function AppTable({ endpoint }: { endpoint: string }) {
+export function AppTable() {
   const { data } = useQuery({
-    queryKey: ["deposits", endpoint],
+    queryKey: ["appTable"],
     queryFn: async () => {
       const users = await getData();
       return users.map((user: any) => ({
+        id: user.id,
         amount: Math.floor(Math.random() * 1000),
         status: ["pending", "processing", "success", "failed"][
           Math.floor(Math.random() * 4)
@@ -230,6 +248,11 @@ export function AppTable({ endpoint }: { endpoint: string }) {
     },
   });
 
+  const queryClient = useQueryClient();
+  const refreshDepositsData = () => {
+    queryClient.invalidateQueries({ queryKey: ["appTable"] });
+  };
+
   return (
     <div
       className="
@@ -246,6 +269,7 @@ export function AppTable({ endpoint }: { endpoint: string }) {
           items-center
         "
       >
+        <Button onClick={refreshDepositsData} className="mr-auto">Update Table</Button>
         <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -256,6 +280,7 @@ export function AppTable({ endpoint }: { endpoint: string }) {
             max-w-sm
           "
         />
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

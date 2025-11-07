@@ -36,7 +36,7 @@ export function AppSidebar() {
         className={!collapsed ? "flex flex-row justify-between" : ""}
       >
         <div className="font-bold">OMS</div>
-        <SidebarTrigger className="self-end hover:bg-gray-400 hover:text-white" />
+        <SidebarTrigger className="self-end hover:bg-gray-200" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup className="gap-1">
@@ -47,7 +47,7 @@ export function AppSidebar() {
                 ,
                 active === "/dashboard"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white"
+                  : "hover:bg-gray-200 hover:text-gray-500"
               )}
             >
               <LayoutDashboard size={20} />
@@ -60,7 +60,7 @@ export function AppSidebar() {
                 "flex items-center gap-3 p-2 rounded-md  transition",
                 active === "/deposit"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white"
+                  : "hover:bg-gray-200 hover:text-gray-500"
               )}
             >
               <BanknoteArrowUp size={20} />
@@ -73,7 +73,7 @@ export function AppSidebar() {
                 "flex items-center gap-3 p-2 rounded-md  transition",
                 active === "/withdraw"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white"
+                  : "hover:bg-gray-200 hover:text-gray-500"
               )}
             >
               <Wallet size={20} />
@@ -86,7 +86,7 @@ export function AppSidebar() {
                 "flex items-center gap-3 p-2 rounded-md  transition",
                 active === "/expenses"
                   ? "bg-black text-white"
-                  : "hover:bg-gray-400 hover:text-white"
+                  : "hover:bg-gray-200 hover:text-gray-500"
               )}
             >
               <CircleDollarSign size={20} />
@@ -119,7 +119,7 @@ export function AppSidebar() {
                       "flex items-center gap-3 p-2 rounded-md  transition text-xs w-full",
                       active === "/profile"
                         ? "bg-black text-white"
-                        : "hover:bg-gray-400 hover:text-white"
+                        : "hover:bg-gray-200 hover:text-gray-500"
                     )}
                   >
                     <User size={20} />
@@ -132,7 +132,7 @@ export function AppSidebar() {
                       "flex items-center gap-3 p-2 rounded-md  transition text-xs w-full",
                       active === "/settings"
                         ? "bg-black text-white"
-                        : "hover:bg-gray-400 hover:text-white"
+                        : "hover:bg-gray-200 hover:text-gray-500"
                     )}
                   >
                     <Settings size={20} />
