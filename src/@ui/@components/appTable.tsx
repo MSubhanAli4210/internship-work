@@ -41,7 +41,7 @@ import {
   TableRow,
 } from "../../components/ui/table";
 
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
 export type Payment = {
   id: string;
@@ -187,7 +187,7 @@ export const columns: ColumnDef<Payment>[] = [
 
 export function AppTable({ endpoint }: { endpoint: string }) {
   const { data } = useQuery({
-    queryKey: ["appTableData", endpoint],
+    queryKey: ["deposits", endpoint],
     queryFn: async () => {
       const users = await getData();
       return users.map((user: any) => ({
@@ -198,8 +198,11 @@ export function AppTable({ endpoint }: { endpoint: string }) {
         email: user.email,
       }));
     },
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
   });
- 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
