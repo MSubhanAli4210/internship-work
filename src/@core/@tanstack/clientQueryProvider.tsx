@@ -19,9 +19,14 @@ export default function QueryProvider({ children }: QueryProviderProps) {
         retryDelay: 1500,
         staleTime: 5 * 60 * 1000,
         gcTime: 5 * 60 * 1000,
+        throwOnError: true,
+      },
+      mutations:{
+        throwOnError:true,
       },
     },
   });
+
   persistQueryClient({
     queryClient,
     persister: localStoragePersistor,

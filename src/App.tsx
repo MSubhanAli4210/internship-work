@@ -5,8 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import NoAuthLayout from "./@ui/@layouts/noAuthlayout";
 import { AppLogin } from "./@ui/@components/appLogin";
 // import { NoAuthLayout } from "./@ui/@layouts/noAuthlayout";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "./@ui/utils/errorFallback";
+
 import { AppSignup } from "./@ui/@components/appSignin";
 import {AuthLayout} from "./@ui/@layouts/authlayout";
 import { AppDashboard } from "./@ui/pages/appDashboard";
@@ -21,7 +20,7 @@ function App() {
     <>
       <BrowserRouter>
         <Toaster />
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
+        
         <Routes>
           {/* not auth paths */}
           <Route path="/" element={<NoAuthLayout/>}>
@@ -40,7 +39,7 @@ function App() {
 
           </Route>     
         </Routes>
-        </ErrorBoundary>
+        
       </BrowserRouter>
     </>
   );
