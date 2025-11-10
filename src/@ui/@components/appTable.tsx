@@ -203,7 +203,7 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 export function AppTable() {
-  const { data } = useQuery({
+    const { data } = useQuery({
     queryKey: ["appTable"],
     queryFn: async () => {
       const users = await getData();
@@ -213,9 +213,10 @@ export function AppTable() {
         status: ["pending", "processing", "success", "failed"][
           Math.floor(Math.random() * 4)
         ],
-        email: user.email,
+        email: user.emal,
       }));
     },
+    throwOnError:true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: 1,
