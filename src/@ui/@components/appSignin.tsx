@@ -211,7 +211,7 @@ export function AppSignup() {
           <CardContent
             className="
               flex flex-col
-              gap-2
+              gap-
             "
           >
             {showUserName ? (

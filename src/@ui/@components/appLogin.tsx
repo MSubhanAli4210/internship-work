@@ -158,17 +158,9 @@ export function AppLogin() {
               <EmailSection Email={Email} setEmail={setEmail} />
             )}
           </CardContent>
-          <CardContent className="flex flex-col gap-3">
-            {/* <Button
-              className="cursor-pointer"
-              onClick={() => {
-                Handlelogin();
-                setShowOTP(true);
-              }}
-            >
-              Request OTP
-            </Button> */}
+          <CardContent className="flex flex-col gap-2">
             {showOTP && Email ? <VerifyButton /> : <RequestOTP />}
+            <CardDescription className="self-center">or</CardDescription>
             <Button className="text-black bg-gray-300 hover:text-white cursor-pointer">
               Login with Google
             </Button>
