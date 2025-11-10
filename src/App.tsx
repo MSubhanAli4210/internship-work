@@ -7,7 +7,7 @@ import { AppLogin } from "./@ui/@components/appLogin";
 // import { NoAuthLayout } from "./@ui/@layouts/noAuthlayout";
 
 import { AppSignup } from "./@ui/@components/appSignin";
-import {AuthLayout} from "./@ui/@layouts/authlayout";
+import { AuthLayout } from "./@ui/@layouts/authlayout";
 import { AppDashboard } from "./@ui/pages/appDashboard";
 import { AppProfile } from "./@ui/pages/appProfile";
 import { AppSettings } from "./@ui/pages/appSettings";
@@ -20,7 +20,6 @@ function App() {
     <>
       <BrowserRouter>
         <Toaster />
-        
         <Routes>
           {/* not auth paths */}
           <Route path="/" element={<NoAuthLayout/>}>
@@ -36,10 +35,8 @@ function App() {
             <Route path="/deposit" element={<AppDeposit />} />
             <Route path="/withdraw" element={<AppWithdraw />} />
             <Route path="/expenses" element={<AppExpenses />} />
-
           </Route>     
         </Routes>
-        
       </BrowserRouter>
     </>
   );
