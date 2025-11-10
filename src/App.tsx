@@ -5,8 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import NoAuthLayout from "./@ui/@layouts/noAuthlayout";
 import { AppLogin } from "./@ui/@components/appLogin";
 // import { NoAuthLayout } from "./@ui/@layouts/noAuthlayout";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "./@ui/utils/errorFallback";
+
 import { AppSignup } from "./@ui/@components/appSignin";
 import { AuthLayout } from "./@ui/@layouts/authlayout";
 import { AppDashboard } from "./@ui/pages/appDashboard";
@@ -21,25 +20,23 @@ function App() {
     <>
       <BrowserRouter>
         <Toaster />
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <Routes>
-            {/* not auth paths */}
-            <Route path="/" element={<NoAuthLayout />}>
-              {/* <Route index element={<AppLogin />} /> */}
-              <Route path="/" element={<AppLogin />} />
-              <Route path="/create-new-account" element={<AppSignup />} />
-            </Route>
-            {/* auth paths */}
-            <Route path="/" element={<AuthLayout />}>
-              <Route path="/dashboard" element={<AppDashboard />} />
-              <Route path="/profile" element={<AppProfile />} />
-              <Route path="/settings" element={<AppSettings />} />
-              <Route path="/deposit" element={<AppDeposit />} />
-              <Route path="/withdraw" element={<AppWithdraw />} />
-              <Route path="/expenses" element={<AppExpenses />} />
-            </Route>
-          </Routes>
-        </ErrorBoundary>
+        <Routes>
+          {/* not auth paths */}
+          <Route path="/" element={<NoAuthLayout/>}>
+            {/* <Route index element={<AppLogin />} /> */}
+            <Route path="/" element={<AppLogin />}/>
+            <Route path="/create-new-account" element={<AppSignup />} />
+          </Route>
+          {/* auth paths */}
+           <Route path="/" element={<AuthLayout/>}>
+            <Route path="/dashboard" element={<AppDashboard />} />
+            <Route path="/profile" element={<AppProfile />} />
+            <Route path="/settings" element={<AppSettings />} />
+            <Route path="/deposit" element={<AppDeposit />} />
+            <Route path="/withdraw" element={<AppWithdraw />} />
+            <Route path="/expenses" element={<AppExpenses />} />
+          </Route>     
+        </Routes>
       </BrowserRouter>
     </>
   );

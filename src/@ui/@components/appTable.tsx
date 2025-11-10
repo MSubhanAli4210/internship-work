@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { getData } from "../../@core/api/api";
 
 import type {
   ColumnDef,
@@ -40,38 +41,7 @@ import {
   TableRow,
 } from "../../components/ui/table";
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
-  },
-];
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type Payment = {
   id: string;
@@ -85,61 +55,115 @@ export const columns: ColumnDef<Payment>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        className="cursor-pointer"
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="
+          cursor-pointer
+        "
       />
     ),
     cell: ({ row }) => (
       <Checkbox
-        className="cursor-pointer"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="
+          cursor-pointer
+        "
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
+
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "id",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="
+            cursor-pointer
+          "
         >
-          Email
+          ID
           <ArrowUpDown />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    // header: "User ID",
+    cell: ({ row }) => (
+      <div
+        className="
+          capitalize
+        "
+      >
+        {row.getValue("id")}
+      </div>
+    ),
+  },
+
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <div
+        className="
+          capitalize
+        "
+      >
+        {row.getValue("status")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "email",
+    header:"Email",
+
+    cell: ({ row }) => (
+      <div
+        className="
+        lowercase
+      "
+      >
+        {row.getValue("email")}
+      </div>
+    ),
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => (
+      <div
+        className="
+        text-right
+      "
+      >
+        Amount
+      </div>
+    ),
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
+      // Format the amount as any currency.
+      const formatted = new Intl.NumberFormat("en-pk", {
         style: "currency",
-        currency: "USD",
+        currency: "pkr",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div
+          className="
+          text-right font-medium
+        "
+        >
+          {formatted}
+        </div>
+      );
     },
   },
   {
@@ -151,8 +175,13 @@ export const columns: ColumnDef<Payment>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+            <Button
+              variant="ghost"
+              className="
+                h-8 w-8
+                p-0
+              "
+            >
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
@@ -174,6 +203,25 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 export function AppTable() {
+    const { data } = useQuery({
+    queryKey: ["appTable"],
+    queryFn: async () => {
+      const users = await getData();
+      return users.map((user: any) => ({
+        id: user.id,
+        amount: Math.floor(Math.random() * 1000),
+        status: ["pending", "processing", "success", "failed"][
+          Math.floor(Math.random() * 4)
+        ],
+        email: user.emal,
+      }));
+    },
+    throwOnError:true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
+  });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -183,7 +231,7 @@ export function AppTable() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: data ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -201,20 +249,47 @@ export function AppTable() {
     },
   });
 
+  const queryClient = useQueryClient();
+  const refreshDepositsData = () => {
+    queryClient.invalidateQueries({ queryKey: ["appTable"] });
+  };
+
   return (
-    <div className="w-full bg-white p-4 rounded-md">
-      <div className="flex items-center py-4">
+    <div
+      className="
+        w-full
+        p-4
+        bg-white
+        rounded-md
+      "
+    >
+      <div
+        className="
+          flex
+          py-4
+          items-center
+        "
+      >
+        <Button onClick={refreshDepositsData} className="mr-auto">Update Table</Button>
         <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="
+            max-w-sm
+          "
         />
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button
+              variant="outline"
+              className="
+                ml-auto
+              "
+            >
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -226,11 +301,13 @@ export function AppTable() {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
                     }
+                    className="
+                      capitalize
+                    "
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -239,7 +316,12 @@ export function AppTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div
+        className="
+          overflow-hidden
+          rounded-md border
+        "
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -280,7 +362,10 @@ export function AppTable() {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="
+                    h-24
+                    text-center
+                  "
                 >
                   No results.
                 </TableCell>
@@ -289,12 +374,27 @@ export function AppTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
+      <div
+        className="
+          flex
+          space-x-2 py-4
+          items-center justify-end
+        "
+      >
+        <div
+          className="
+            flex-1
+            text-muted-foreground text-sm
+          "
+        >
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div
+          className="
+            space-x-2
+          "
+        >
           <Button
             variant="outline"
             size="sm"
