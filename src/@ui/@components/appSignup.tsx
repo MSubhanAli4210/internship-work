@@ -17,6 +17,7 @@ import { Button } from "../../components/ui/button";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 // const navigate = useNavigate();
 
@@ -51,58 +52,6 @@ const OTPSection: React.FC<OTPSectionProps> = ({ OTP, setOTP }) => {
   );
 };
 
-interface EmailSectionProps {
-  Email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const EmailSection: React.FC<EmailSectionProps> = ({ Email, setEmail }) => {
-  return (
-    <CardContent className="flex flex-col gap-2">
-      <CardTitle>Email</CardTitle>
-      <Input
-        type="email"
-        placeholder="enter email here"
-        value={Email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-    </CardContent>
-  );
-};
-
-interface UserNameSectionProps {
-  UserName: string;
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
-  FullName: string;
-  setFullName: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const UserNameSection: React.FC<UserNameSectionProps> = ({
-  UserName,
-  setUserName,
-  FullName,
-  setFullName,
-}) => {
-  return (
-    <CardContent className="flex flex-col gap-2">
-      <CardTitle>User Name</CardTitle>
-      <Input
-        type="text"
-        placeholder="enter your username here"
-        value={UserName}
-        onChange={(e) => setUserName(e.target.value)}
-      />
-      <CardTitle>Full Name</CardTitle>
-      <Input
-        type="text"
-        placeholder="enter your full name here"
-        value={FullName}
-        onChange={(e) => setFullName(e.target.value)}
-      />
-    </CardContent>
-  );
-};
-
 export function AppSignup() {
   const [Email, setEmail] = useState("");
   const [FullName, setFullName] = useState("");
@@ -112,21 +61,17 @@ export function AppSignup() {
   const [OTP, setOTP] = useState("");
   const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const HandleSignup = () => {
-    if (!Email /*|| !Password*/) {
-      toast.error("Please fill all the fileds", { richColors: true });
-      return;
-    } else if (!emailCheck.test(Email)) {
-      toast.error("enter a valid email formate", { richColors: true });
-      // } else if (Password.length < 8) {
-      //   toast.error("password must be atleast 8-digit", { richColors: true });
-    } else {
-      toast.success("Sent OTP to your account", { richColors: true });
-      setShowOTP(true);
+  const emailformat = () => {
+    if (!Email) {
+      return toast.error("Please enter an email", { richColors: true });
     }
+    if (!emailCheck.test(Email)) {
+      return toast.error("Please valid email formate", { richColors: true });
+    }
+    sendOtp.mutate();
   };
 
-  const successHandler = () => {
+  const createAccount = () => {
     if (!FullName || !UserName) {
       toast.error("Please fill all the fields", { richColors: true });
       return;
@@ -135,52 +80,31 @@ export function AppSignup() {
     }
   };
 
-  const VerifyHandler = () => {
-    if (OTP.length < 6) {
-      toast.error("Please enter full OTP", { richColors: true });
-      return;
-    } else {
-      toast.success("Verified!", { richColors: true });
+  const OTPCheck = useMutation({
+    mutationFn: async () => {
+      if (OTP.length < 6) {
+        toast.error("Please enter full OTP", { richColors: true });
+        return;
+      } else toast.success("Verified", { richColors: true });
       setShowUserName(true);
       setShowOTP(false);
-    }
-  };
+    },
+  });
 
-  const RequestOTP = () => {
-    return (
-      <Button
-        className="cursor-pointer"
-        onClick={() => {
-          HandleSignup();
-        }}
-      >
-        Request OTP
-      </Button>
-    );
-  };
+  const sendOtp = useMutation({
+    mutationFn: async () => {
+      // const res = await getEmail();
+      // return res.json();
+    },
+    onSuccess: () => {
+      toast.success("OTP sent! Check you inbox.", { richColors: true });
+      setShowOTP(true);
+    },
 
-  const VerifyButton = () => {
-    return (
-      <Button
-        className="cursor-pointer"
-        onClick={() => {
-          VerifyHandler();
-        }}
-      >
-        Verify
-      </Button>
-    );
-  };
-
-  const DoneButton = () => {
-    return (
-      <CardDescription>
-        <Button className="cursor-pointer w-full" onClick={successHandler}>
-          Done
-        </Button>
-      </CardDescription>
-    );
-  };
+    onError: () => {
+      toast.error("faild to send otp", { richColors: true });
+    },
+  });
 
   return (
     <>
@@ -204,49 +128,73 @@ export function AppSignup() {
         </CardHeader>
         <CardContent
           className="
-            flex flex-col
-            gap-
-          "
-        >
-          <CardContent
-            className="
               flex flex-col
               gap-
             "
-          >
-            {showUserName ? (
-              <UserNameSection
-                UserName={UserName}
-                setUserName={setUserName}
-                FullName={FullName}
-                setFullName={setFullName}
+        >
+          {showUserName ? (
+            <CardContent className="flex flex-col gap-2">
+              <CardTitle>User Name</CardTitle>
+              <Input
+                type="text"
+                placeholder="enter your username here"
+                value={UserName}
+                onChange={(e) => setUserName(e.target.value)}
               />
-            ) : showOTP && Email ? (
-              <OTPSection OTP={OTP} setOTP={setOTP} />
-            ) : (
-              <EmailSection Email={Email} setEmail={setEmail} />
-            )}
-          </CardContent>
+              <CardTitle>Full Name</CardTitle>
+              <Input
+                type="text"
+                placeholder="enter your full name here"
+                value={FullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+            </CardContent>
+          ) : showOTP && Email ? (
+            <OTPSection OTP={OTP} setOTP={setOTP} />
+          ) : (
+            <CardContent className="flex flex-col gap-2">
+      <CardTitle>Email</CardTitle>
+      <Input
+        type="email"
+        placeholder="enter email here"
+        value={Email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+    </CardContent>
+          )}
           <CardContent
             className="
               flex flex-col
               gap-2 
             "
           >
-            {/* <Button
-              onClick={HandleSignup}
-              className="
-                cursor-pointer
-              "
-            >
-              Request OTP
-            </Button> */}
             {showUserName ? (
-              <DoneButton />
+              <CardDescription>
+                <Button
+                  className="cursor-pointer w-full"
+                  onClick={createAccount}
+                >
+                  Done
+                </Button>
+              </CardDescription>
             ) : showOTP && Email ? (
-              <VerifyButton />
+              <Button
+                className="cursor-pointer"
+                onClick={() => {
+                  OTPCheck.mutate();
+                }}
+              >
+                Verify
+              </Button>
             ) : (
-              <RequestOTP />
+              <Button
+                className="cursor-pointer"
+                onClick={() => {
+                  emailformat();
+                }}
+              >
+                Request OTP
+              </Button>
             )}
 
             <CardDescription className="self-center">or</CardDescription>

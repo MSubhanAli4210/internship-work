@@ -1,6 +1,8 @@
-import { axiosInstance } from "../@axios/instances";
-
+import { axiosInstance, axiosInstance2 } from "../@axios/instances";
 export const getData = async () => {
-  throw new Error("Test: this error is just to test my app")
   return (await axiosInstance.get("")).data;
 };
+
+export const getEmail= async ()=>{
+  return (await axiosInstance2.get("")).data;
+}

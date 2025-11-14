@@ -6,12 +6,12 @@ import NoAuthLayout from "./@ui/@layouts/noAuthlayout";
 import { AppLogin } from "./@ui/@components/appLogin";
 // import { NoAuthLayout } from "./@ui/@layouts/noAuthlayout";
 
-import { AppSignup } from "./@ui/@components/appSignin";
+import { AppSignup } from "./@ui/@components/appSignup";
 import { AuthLayout } from "./@ui/@layouts/authlayout";
 import { AppDashboard } from "./@ui/pages/appDashboard";
 import { AppProfile } from "./@ui/pages/appProfile";
 import { AppSettings } from "./@ui/pages/appSettings";
-import AppDeposit from "./@ui/pages/appDeposit";
+import AppDeposit from "./@ui/pages/appDeposits";
 import AppWithdraw from "./@ui/pages/appWithdraw";
 import AppExpenses from "./@ui/pages/appExpenses";
 
@@ -32,7 +32,7 @@ function App() {
             <Route path="/dashboard" element={<AppDashboard />} />
             <Route path="/profile" element={<AppProfile />} />
             <Route path="/settings" element={<AppSettings />} />
-            <Route path="/deposit" element={<AppDeposit />} />
+            <Route path="/deposits" element={<AppDeposit />} />
             <Route path="/withdraw" element={<AppWithdraw />} />
             <Route path="/expenses" element={<AppExpenses />} />
           </Route>     
