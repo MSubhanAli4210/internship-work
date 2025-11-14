@@ -17,133 +17,54 @@ import { Button } from "../../components/ui/button";
 import { NavLink } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
-
-interface OTPSectionProps {
-  OTP: string;
-  setOTP: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const OTPSection: React.FC<OTPSectionProps> = ({ OTP, setOTP }) => {
-  return (
-    <CardContent className="flex flex-col gap-3">
-      <CardTitle>OTP</CardTitle>
-      <div className="flex justify-center">
-        <InputOTP maxLength={6} value={OTP} onChange={setOTP}>
-          <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-          </InputOTPGroup>
-          <InputOTPSeparator />
-          <InputOTPGroup>
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
-          </InputOTPGroup>
-        </InputOTP>
-      </div>
-    </CardContent>
-  );
-};
-
-interface EmailSectionProps {
-  Email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const EmailSection: React.FC<EmailSectionProps> = ({ Email, setEmail }) => {
-  return (
-    <CardContent className="flex flex-col gap-2">
-      <CardTitle>Email</CardTitle>
-      <Input
-        type="email"
-        placeholder="enter email here"
-        value={Email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-    </CardContent>
-  );
-};
+import { useMutation} from "@tanstack/react-query";
 
 export function AppLogin() {
-  const [Email, setEmail] = useState("");
   const [showOTP, setShowOTP] = useState(false);
   const [OTP, setOTP] = useState("");
-  // const [Password, setPassword] = useState("");
   const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const [Email, setEmail] = useState("");
 
-  const Handlelogin = () => {
-    if (!Email /* || !Password */) {
-      toast.error("Please fill all the fields", { richColors: true });
-      return;
-    } else if (!emailCheck.test(Email)) {
-      toast.error("enter a valid email format", { richColors: true });
-      // } else if (Password.length < 8) {
-      //   toast.error("password must be atleast 8-digit", { richColors: true });
-    } else {
-      toast.success("Sent OTP to your email", { richColors: true });
-      setShowOTP(true);
+  const emailformat = ()=>{
+    if(!Email){
+      return toast.error("Please enter an email", {richColors: true});
     }
-  };
+    if(!emailCheck.test(Email)){
+      return toast.error("Please valid email formate",{richColors:true});
+    }
+    sendOtp.mutate();
+  }
 
-  const LoadingHandler = () => {
-    if (OTP.length < 6) {
-      toast.error("Please enter full OTP", { richColors: true });
-      return;
-    } else toast.success("Loading...", { richColors: true });
-  };
+  const sendOtp = useMutation({
+    mutationFn:
+     async () => {
+      // const res = await getEmail();
+      // return res.json();
+    },
+    onSuccess: ()=>{
+      toast.success("OTP sent! Check you inbox.",{richColors:true});
+      setShowOTP(true);
+    },
 
-  // const EmailSection = () => {
-  //   return (
-  //     <CardContent className="flex flex-col gap-3">
-  //       <CardTitle>Email</CardTitle>
-  //       <Input
-  //         type="email"
-  //         placeholder="enter email here"
-  //         value={Email}
-  //         onChange={(e) => {
-  //           setEmail(e.target.value);
-  //         }}
-  //       ></Input>
-  //     </CardContent>
-  //   );
-  // };
+    onError: ()=>{
+      toast.error("faild to send otp",{richColors:true});
+    }
 
-  const RequestOTP = () => {
-    return (
-      <Button
-        className="cursor-pointer"
-        onClick={() => {
-          Handlelogin();
-        }}
-      >
-        Request OTP
-      </Button>
-    );
-  };
+  });
 
-  const VerifyButton = () => {
-    return (
-      <Button
-        className="cursor-pointer"
-        onClick={() => {
-          LoadingHandler();
-        }}
-      >
-        Verify
-      </Button>
-    );
-  };
+
+  const OTPCheck = useMutation({
+    mutationFn: async () => {
+      if (OTP.length < 6) {
+        toast.error("Please enter full OTP", { richColors: true });
+        return;
+      } else toast.success("Verified", { richColors: true });
+    },
+  });
 
   return (
     <>
-      <Card
-        className="
-                md:flex md:flex-col md:gap-3 md:w-[28%] md:bg-gray-100
-                w-[80%]
-        
-        "
-      >
+      <Card className=" md:flex md:flex-col md:gap-3 md:w-[28%] md:bg-gray-100 w-[80%] ">
         <CardHeader>
           <CardTitle className="text-2xl">Welcome Back!</CardTitle>
           <CardDescription>
@@ -151,15 +72,55 @@ export function AppLogin() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col">
-          <CardContent className="flex flex-col gap-3">
-            {showOTP && Email ? (
-              <OTPSection OTP={OTP} setOTP={setOTP} />
-            ) : (
-              <EmailSection Email={Email} setEmail={setEmail} />
-            )}
-          </CardContent>
+          {showOTP && Email ? (
+            <CardContent className="flex flex-col items-center gap-3">
+              <CardTitle className="text-2xl font-bold">Enter-OTP</CardTitle>
+              <InputOTP maxLength={6} value={OTP} onChange={setOTP}>
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </CardContent>
+          ) : (
+            <CardContent className="flex flex-col gap-3">
+              <CardTitle>Email</CardTitle>
+              <Input
+                type="email"
+                placeholder="enter email here"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              ></Input>
+            </CardContent>
+          )}
           <CardContent className="flex flex-col gap-2">
-            {showOTP && Email ? <VerifyButton /> : <RequestOTP />}
+            {showOTP && Email ? (
+              <Button
+                className="cursor-pointer"
+                onClick={() => {
+                  OTPCheck.mutate();
+                }}
+              >
+                Verify
+              </Button>
+            ) : (
+              <Button
+                className="cursor-pointer"
+                onClick={() => {
+                  emailformat();
+                }}
+              >
+                Request OTP
+              </Button>
+            )}
             <CardDescription className="self-center">or</CardDescription>
             <Button className="text-black bg-gray-300 hover:text-white cursor-pointer">
               Login with Google

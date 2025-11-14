@@ -122,8 +122,8 @@ export const columns: ColumnDef<Payment>[] = [
     ),
   },
   {
-    accessorKey: "email",
-    header:"Email",
+    accessorKey: "username",
+    header:"User Name",
 
     cell: ({ row }) => (
       <div
@@ -131,7 +131,7 @@ export const columns: ColumnDef<Payment>[] = [
         lowercase
       "
       >
-        {row.getValue("email")}
+        {row.getValue("username")}
       </div>
     ),
   },
@@ -202,19 +202,18 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function AppTable() {
+export function BankDeposit() {
     const { data } = useQuery({
-    queryKey: ["appTable"],
+    queryKey: ["BankDeposite"],
     queryFn: async () => {
       const users = await getData();
-      console.log(users);
       return users.map((user: any) => ({
         id: user.id,
         amount: Math.floor(Math.random() * 1000),
         status: ["pending", "processing", "success", "failed"][
           Math.floor(Math.random() * 4)
         ],
-        email: user.email,
+        username: user.username,
       }));
     },
     throwOnError:true,
@@ -252,7 +251,7 @@ export function AppTable() {
 
   const queryClient = useQueryClient();
   const refreshDepositsData = () => {
-    queryClient.invalidateQueries({ queryKey: ["appTable"] });
+    queryClient.invalidateQueries({ queryKey: ["BankDeposite"] });
   };
 
   return (

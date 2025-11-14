@@ -54,17 +54,17 @@ export function AppSidebar() {
               {!collapsed && <span>Dashboard</span>}
             </SidebarGroupContent>
           </NavLink>
-          <NavLink to="/deposit">
+          <NavLink to="/deposits">
             <SidebarGroupContent
               className={cn(
                 "flex items-center gap-3 p-2 rounded-md  transition",
-                active === "/deposit"
+                active === "/deposits"
                   ? "bg-black text-white"
                   : "hover:bg-gray-200 hover:text-gray-500"
               )}
             >
               <BanknoteArrowUp size={20} />
-              {!collapsed && <span>Deposit</span>}
+              {!collapsed && <span>Deposits</span>}
             </SidebarGroupContent>
           </NavLink>
           <NavLink to="/withdraw">
