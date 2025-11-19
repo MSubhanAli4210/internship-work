@@ -3,6 +3,9 @@
 import * as React from "react";
 import { getData } from "../../@core/api/api";
 
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -42,6 +45,14 @@ import {
 } from "../../components/ui/table";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../../components/ui/pagination";
 
 export type Payment = {
   id: string;
@@ -123,7 +134,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "username",
-    header:"User Name",
+    header: "User Name",
 
     cell: ({ row }) => (
       <div
@@ -203,7 +214,7 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 export function BankDeposit() {
-    const { data } = useQuery({
+  const { data } = useQuery({
     queryKey: ["BankDeposite"],
     queryFn: async () => {
       const users = await getData();
@@ -216,7 +227,7 @@ export function BankDeposit() {
         username: user.username,
       }));
     },
-    throwOnError:true,
+    throwOnError: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: 1,
@@ -229,6 +240,27 @@ export function BankDeposit() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const pagenummber = (page: number) => {
+    table.setPageIndex(page);
+
+    const params = new URLSearchParams(location.search);
+    params.set("page", (page + 1).toString());
+
+    navigate(`?${params.toString()}`);
+  };
+
+  const params = new URLSearchParams(location.search);
+  const pageParam = Number(params.get("page"));
+  const InitialPage = !isNaN(pageParam) && pageParam > 0 ? pageParam - 1 : 0;
+  useEffect(() => {
+    if (!isNaN(pageParam) && pageParam > 0) {
+      table.setPageIndex(pageParam - 1);
+    }
+  }, [location.search]);
 
   const table = useReactTable({
     data: data ?? [],
@@ -246,6 +278,13 @@ export function BankDeposit() {
       columnFilters,
       columnVisibility,
       rowSelection,
+    },
+
+    initialState: {
+      pagination: {
+        pageSize: 5,
+        pageIndex: InitialPage,
+      },
     },
   });
 
@@ -270,18 +309,21 @@ export function BankDeposit() {
           items-center
         "
       >
-        <Button onClick={refreshDepositsData} className="mr-auto">Update Table</Button>
+        <Button onClick={refreshDepositsData} className="mr-auto">
+          Update Table
+        </Button>
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter Users..."
+          value={
+            (table.getColumn("username")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("username")?.setFilterValue(event.target.value)
           }
           className="
             max-w-sm
           "
         />
-        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -381,37 +423,54 @@ export function BankDeposit() {
           items-center justify-end
         "
       >
-        <div
-          className="
-            flex-1
-            text-muted-foreground text-sm
-          "
-        >
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div
-          className="
-            space-x-2
-          "
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  pagenummber(table.getState().pagination.pageIndex - 1);
+                }}
+                className={
+                  !table.getCanPreviousPage()
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                }
+              />
+            </PaginationItem>
+            {Array.from({ length: table.getPageCount() }).map(
+              (_, idx: number) => (
+                <PaginationItem key={idx}>
+                  <PaginationLink
+                    href="#"
+                    isActive={table.getState().pagination.pageIndex === idx}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      pagenummber(idx);
+                    }}
+                  >
+                    {idx + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )
+            )}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  pagenummber(table.getState().pagination.pageIndex + 1);
+                }}
+                className={
+                  !table.getCanNextPage()
+                    ? "opacity-50 pointer-events-none"
+                    : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
