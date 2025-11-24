@@ -18,6 +18,7 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { otpVerifyApi, signUpApi } from "../../@core/api/api";
 
 // const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ const OTPSection: React.FC<OTPSectionProps> = ({ OTP, setOTP }) => {
         Enter the OTP sent to your email
       </CardDescription>
       <div className="flex justify-center">
-        <InputOTP maxLength={6} value={OTP} onChange={setOTP}>
+        <InputOTP name="otp" maxLength={6} value={OTP} onChange={setOTP}>
           <InputOTPGroup>
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />
@@ -71,38 +72,63 @@ export function AppSignup() {
     sendOtp.mutate();
   };
 
-  const createAccount = () => {
-    if (!FullName || !UserName) {
-      toast.error("Please fill all the fields", { richColors: true });
-      return;
-    } else {
-      toast.success("Account Created Successfully!", { richColors: true });
-    }
-  };
+  const createAccount = useMutation({
+    mutationFn: async () => {
+      return signUpApi({
+        email: Email,
+        username: UserName,
+        fullname: FullName,
+      });
+    },
+
+    onSuccess: (res) => {
+      toast.success("Account has been created!", { richColors: true });
+      console.log("signup response:", res.data);
+    },
+
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || "Signup failed", {
+        richColors: true,
+      });
+    },
+  });
 
   const OTPCheck = useMutation({
     mutationFn: async () => {
       if (OTP.length < 6) {
         toast.error("Please enter full OTP", { richColors: true });
         return;
-      } else toast.success("Verified", { richColors: true });
+      }
+      return await otpVerifyApi({
+        email: Email,
+        otp: OTP,
+      });
+    },
+
+    onSuccess: () => {
+      toast.success("Verified", { richColors: true });
       setShowUserName(true);
       setShowOTP(false);
+    },
+
+    onError: (err) => {
+      toast.error(err.message || "Invalid OTP", { richColors: true });
     },
   });
 
   const sendOtp = useMutation({
     mutationFn: async () => {
-      // const res = await getEmail();
-      // return res.json();
+      return await signUpApi({ email: Email });
     },
     onSuccess: () => {
       toast.success("OTP sent! Check you inbox.", { richColors: true });
       setShowOTP(true);
     },
 
-    onError: () => {
-      toast.error("faild to send otp", { richColors: true });
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || "OTP sending failed", {
+        richColors: true,
+      });
     },
   });
 
@@ -137,6 +163,7 @@ export function AppSignup() {
               <CardTitle>User Name</CardTitle>
               <Input
                 type="text"
+                name="userName"
                 placeholder="enter your username here"
                 value={UserName}
                 onChange={(e) => setUserName(e.target.value)}
@@ -144,6 +171,7 @@ export function AppSignup() {
               <CardTitle>Full Name</CardTitle>
               <Input
                 type="text"
+                name="fullName"
                 placeholder="enter your full name here"
                 value={FullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -153,14 +181,15 @@ export function AppSignup() {
             <OTPSection OTP={OTP} setOTP={setOTP} />
           ) : (
             <CardContent className="flex flex-col gap-2">
-      <CardTitle>Email</CardTitle>
-      <Input
-        type="email"
-        placeholder="enter email here"
-        value={Email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-    </CardContent>
+              <CardTitle>Email</CardTitle>
+              <Input
+                type="email"
+                name="email"
+                placeholder="enter email here"
+                value={Email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </CardContent>
           )}
           <CardContent
             className="
@@ -172,7 +201,7 @@ export function AppSignup() {
               <CardDescription>
                 <Button
                   className="cursor-pointer w-full"
-                  onClick={createAccount}
+                  onClick={() => createAccount.mutate()}
                 >
                   Done
                 </Button>
