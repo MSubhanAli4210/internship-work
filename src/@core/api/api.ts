@@ -1,8 +1,16 @@
-import { axiosInstance, axiosInstance2 } from "../@axios/instances";
+import { axiosInstance, axiosInstanceOfServer,} from "../@axios/instances";
 export const getData = async () => {
   return (await axiosInstance.get("")).data;
 };
 
-export const getEmail= async ()=>{
-  return (await axiosInstance2.get("")).data;
+export const signUpApi =async (data: any)=>{
+  return await axiosInstanceOfServer.post("/signup",data);
 }
+
+export const logInApi = async (data: any)=>{
+  return await axiosInstanceOfServer.post("/login",data);
+}
+
+export const otpVerifyApi = async (data: any)=>{
+  return await axiosInstanceOfServer.post("")
+} 
