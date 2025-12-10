@@ -161,9 +161,9 @@ export const columns: ColumnDef<Payment>[] = [
       const amount = parseFloat(row.getValue("amount"));
 
       // Format the amount as any currency.
-      const formatted = new Intl.NumberFormat("en-pk", {
+      const formatted = new Intl.NumberFormat("en-us", {
         style: "currency",
-        currency: "pkr",
+        currency: "usd",
       }).format(amount);
 
       return (
