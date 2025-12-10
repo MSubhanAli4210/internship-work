@@ -65,7 +65,6 @@ export function AppSignup() {
   const [OTP, setOTP] = useState("");
   const navigate = useNavigate();
 
-
   const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const sendOtp = useMutation({
@@ -245,7 +244,7 @@ export function AppSignup() {
                 }}
                 disabled={sendOtp.isPending}
               >
-                Request OTP
+                {sendOtp.isPending ? "Sending..." : "Request OTP"}
               </Button>
             )}
 
