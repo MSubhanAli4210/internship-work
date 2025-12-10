@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {serverUrl, serverUrl1} from '../@config/config';
+import {serverUrl} from '../@config/config';
+import { serverUrl1 } from '../@config/config';
 
 let baseUrl: string=`${serverUrl1}`;
 
