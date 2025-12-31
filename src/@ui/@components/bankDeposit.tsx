@@ -323,6 +323,10 @@ export function BankDeposit() {
         queryKey: ["BankDeposite"],
         refetchType: "active",
       });
+      queryClient.invalidateQueries({
+        queryKey: ["balance"],
+        refetchType: "active",
+      });
     },
     onError: (err: any) => {
        console.log(err?.response?.data?.message);
@@ -381,8 +385,8 @@ export function BankDeposit() {
       toast.error("Please enter a deposit amount", { richColors: true });
       return;
     }
-    if (Deposite.length > 10) {
-      toast.error("Deposit amount is too large", { richColors: true });
+    if (Deposite.length > 8 || Deposite.length < 2) {
+      toast.error("Deposit amount is too large or too small", { richColors: true });
       return;
     }
 
@@ -445,8 +449,8 @@ export function BankDeposit() {
                 onChange={(e) => setComment(e.target.value)}
               />
 
-              <Button type="button" onClick={handleAddDeposit}>
-                Add
+              <Button type="button" onClick={handleAddDeposit} disabled={AddDeposit.isPending}>
+                {AddDeposit.isPending ? "Adding..." : "Add"}
               </Button>
             </CardContent>
           </DropdownMenuContent>

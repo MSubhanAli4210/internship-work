@@ -323,6 +323,10 @@ export function AppTable() {
         queryKey: ["Bankwithdraw"],
         refetchType: "active",
       });
+      queryClient.invalidateQueries({
+        queryKey: ["balance"],
+        refetchType: "active",
+      });
     },
     onError: (err: any) => {
        console.log(err?.response?.data?.message);
@@ -381,8 +385,8 @@ export function AppTable() {
       toast.error("Please enter a Withdraw amount", { richColors: true });
       return;
     }
-    if (withdraw.length > 8) {
-      toast.error("Withdraw amount is too large", { richColors: true });
+    if (withdraw.length > 8 || withdraw.length < 2) {
+      toast.error("Withdraw amount is too large or too small", { richColors: true });
       return;
     }
 
@@ -445,8 +449,8 @@ export function AppTable() {
                 onChange={(e) => setComment(e.target.value)}
               />
 
-              <Button type="button" onClick={handleAddWithdraw}>
-                Add
+              <Button type="button" onClick={handleAddWithdraw} disabled={AddWithdraw.isPending}>
+                {AddWithdraw.isPending ? "Adding..." : "Add"}
               </Button>
             </CardContent>
           </DropdownMenuContent>
