@@ -1,4 +1,5 @@
 import { Button } from "../../components/ui/button";
+
 import { AppTable } from "../@components/appTable";
 import { BankDeposit } from "../@components/bankDeposit";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,15 +25,19 @@ function AppDeposit() {
             "
       >
         <h1 className="font-bold m-2">
-          {type === "cash" ? "Cash Deposit" : "Bank Deposit"}
+          {type === "cash"
+            ? "Cash Deposit"
+            : type === "bank"
+            ? "Bank Deposit"
+            : "Pending Requests for deposits"}
         </h1>
 
         <div className="flex justify-between mb-5 bg-gray-300 rounded-md">
           <Button
             className={
-              type === "cash"
-                ? "w-[50%] bg-gray-300 text-black hover:text-gray-400 hover:bg-gray-200"
-                : "w-[50%]"
+              type === "bank"
+                ? "w-[50%]"
+                : "w-[50%] bg-gray-300 text-black hover:text-gray-400 hover:bg-gray-200"
             }
             onClick={bank}
           >
@@ -40,16 +45,16 @@ function AppDeposit() {
           </Button>
           <Button
             className={
-              type === "bank"
-                ? "w-[50%] bg-gray-300 text-black hover:text-gray-400 hover:bg-gray-200"
-                : "w-[50%]"
+              type === "cash"
+                ? "w-[50%]"
+                : "w-[50%] bg-gray-300 text-black hover:text-gray-400 hover:bg-gray-200"
             }
             onClick={cash}
           >
             Cash Deposits
           </Button>
         </div>
-        {type === "cash" ? <AppTable /> :<BankDeposit />}
+        {type === "cash" ? <AppTable /> : <BankDeposit />}
       </div>
     </>
   );
