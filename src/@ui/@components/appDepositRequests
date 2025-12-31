@@ -1,0 +1,7 @@
+export function PendingDepositRequests() {
+  return (
+    <div>
+      <h1>Pending Deposit Requests</h1>
+    </div>
+  );
+}

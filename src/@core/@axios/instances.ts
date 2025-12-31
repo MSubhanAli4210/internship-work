@@ -11,3 +11,15 @@ export const axiosInstance = axios.create({
 export const axiosInstanceOfServer = axios.create({
     baseURL: `${serverUrl}`,
 }) 
+
+export const axiosInstanceOfUser = axios.create({
+    baseURL: `${serverUrl}user/`,
+});
+
+export const axiosInstanceOfAdmin = axios.create({
+    baseURL: `${serverUrl}admin/`,
+});
+
+export const axiosInstanceofBalance = axios.create({
+    baseURL: `${serverUrl}/`,
+});

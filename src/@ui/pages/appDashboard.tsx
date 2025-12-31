@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import { AppVault } from "../@components/appVault";
 export function AppDashboard() {
   return (
     <>
@@ -25,7 +26,6 @@ export function AppDashboard() {
         >
           Dashboard
         </h1>
-
         <div>
           <div
             className="
@@ -36,19 +36,7 @@ export function AppDashboard() {
               
             "
           >
-            <Card
-              className="
-                m-2
-              "
-            >
-              <CardHeader>
-                <CardTitle>Welcome to the App Dashboard</CardTitle>
-                <CardDescription>
-                  Here you can find an overview of your application's
-                  performance and statistics.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+           <AppVault />
             <Card
               className="
                 m-2

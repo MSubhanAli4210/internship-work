@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import {
   Sidebar,
@@ -13,19 +13,23 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "../../components/ui/sidebar";
-import { BanknoteArrowUp , ChevronUp, CircleDollarSign, LayoutDashboard, Settings, User, Wallet} from "lucide-react";
+import { BanknoteArrowUp , ChevronUp, CircleDollarSign, LayoutDashboard, LogOutIcon, Settings, User, Wallet} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
+import { userAuthStore } from "../../store/userAuthStore";
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
   const active = location.pathname;
+  const {user} = userAuthStore();
+  const logout = userAuthStore((state)=> state.logout);
+  const navigate = useNavigate();
 
   return (
     <Sidebar
@@ -102,7 +106,7 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <User size={20} />
-                  Username
+                  {user?.userName}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -139,6 +143,19 @@ export function AppSidebar() {
                     <span>Settings</span>
                   </DropdownMenuItem>
                 </NavLink>
+                <NavLink to={"/"}>
+                <DropdownMenuItem
+                    className={cn(
+                      "flex items-center gap-3 p-2 rounded-md  transition text-xs w-full",
+                      active === "/settings"
+                        ? "bg-black text-white"
+                        : "hover:bg-gray-200 hover:text-gray-500"
+                    )}
+                  >
+                    <LogOutIcon size={20} />
+                   <button onClick={() => { logout(); navigate("/"); }}>Logout</button>
+                  </DropdownMenuItem>
+                  </NavLink>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

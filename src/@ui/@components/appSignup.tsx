@@ -20,41 +20,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
-import { logInApi, otpVerifyApi, signUpApi } from "../../@core/api/api";
-
-interface OTPSectionProps {
-  OTP: string;
-  setOTP: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const OTPSection: React.FC<OTPSectionProps> = ({ OTP, setOTP }) => {
-  return (
-    <CardContent className="flex flex-col gap-3">
-      <CardTitle className="self-center">Verify OTP</CardTitle>
-      <CardDescription className="self-center">
-        Enter the OTP sent to your email
-      </CardDescription>
-
-      <div className="flex justify-center">
-        <InputOTP maxLength={6} value={OTP} onChange={setOTP}>
-          <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-          </InputOTPGroup>
-
-          <InputOTPSeparator />
-
-          <InputOTPGroup>
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
-          </InputOTPGroup>
-        </InputOTP>
-      </div>
-    </CardContent>
-  );
-};
+import { lookUpApi, otpVerifyApi, signUpApi } from "../../@core/api/api";
+import { userAuthStore } from "../../store/userAuthStore";
 
 export function AppSignup() {
   const [Email, setEmail] = useState("");
@@ -64,12 +31,11 @@ export function AppSignup() {
   const [showUserName, setShowUserName] = useState(false);
   const [OTP, setOTP] = useState("");
   const navigate = useNavigate();
-
   const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const sendOtp = useMutation({
     mutationFn: async () => {
-      return logInApi({ email: Email });
+      return lookUpApi({ email: Email, type: "signup" });
     },
     onSuccess: (msg: any) => {
       toast.success(
@@ -99,15 +65,21 @@ export function AppSignup() {
     sendOtp.mutate();
   };
 
+  const setUser = userAuthStore((state) => state.setUser);
+
+  const otpFormate = () => {
+    if (OTP.length < 6) {
+      return toast.error("Please enter full OTP", { richColors: true });
+    }
+    OTPCheck.mutate();
+  };
+
   const OTPCheck = useMutation({
     mutationFn: async () => {
-      if (OTP.length < 6) {
-        toast.error("Please enter full OTP", { richColors: true });
-        throw new Error("otp too short");
-      }
       return otpVerifyApi({
         email: Email,
         otp: OTP,
+        type: "signup",
       });
     },
 
@@ -124,6 +96,18 @@ export function AppSignup() {
     },
   });
 
+  const heandelCreateAccount = () => {
+    if(!UserName){
+      return toast.error("Please enter a username", { richColors: true });
+    }
+
+    if(!FullName){
+      return toast.error("Please enter your full name", { richColors: true });
+    }
+
+    createAccount.mutate();
+  };
+
   const createAccount = useMutation({
     mutationFn: async () => {
       return signUpApi({
@@ -136,6 +120,7 @@ export function AppSignup() {
     onSuccess: (res) => {
       toast.success("Account has been created!", { richColors: true });
       console.log("signup response:", res.data);
+      setUser(res?.data.user, res?.data.token);
       setShowUserName(false);
 
       navigate("/dashboard");
@@ -172,7 +157,6 @@ export function AppSignup() {
         <CardContent
           className="
               flex flex-col
-              gap-
             "
         >
           {showUserName ? (
@@ -184,6 +168,12 @@ export function AppSignup() {
                 placeholder="enter your username here"
                 value={UserName}
                 onChange={(e) => setUserName(e.target.value)}
+               onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    heandelCreateAccount();
+                  }
+                }}
               />
 
               <CardTitle>Full Name</CardTitle>
@@ -193,19 +183,67 @@ export function AppSignup() {
                 placeholder="enter your full name here"
                 value={FullName}
                 onChange={(e) => setFullName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    heandelCreateAccount();
+                  }
+                }}
               />
             </CardContent>
           ) : showOTP && Email ? (
-            <OTPSection OTP={OTP} setOTP={setOTP} />
+            <CardContent className="flex flex-col gap-3">
+              <CardTitle className="self-center">Verify OTP</CardTitle>
+              <CardDescription className="self-center">
+                Enter the OTP sent to your email
+              </CardDescription>
+
+              <div className="flex justify-center">
+                <InputOTP
+                  autoFocus
+                  maxLength={6}
+                  disabled={OTPCheck.isPending}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      otpFormate(); // verify OTP when Enter is pressed
+                    }
+                  }}
+                  value={OTP}
+                  onChange={setOTP}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                  </InputOTPGroup>
+
+                  <InputOTPSeparator />
+
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+            </CardContent>
           ) : (
             <CardContent className="flex flex-col gap-2">
               <CardTitle>Email</CardTitle>
               <Input
                 type="email"
-                name="email"
                 placeholder="enter email here"
+                autoFocus
                 value={Email}
+                disabled={sendOtp.isPending}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    emailformat();
+                  }
+                }}
               />
             </CardContent>
           )}
@@ -220,29 +258,21 @@ export function AppSignup() {
               <CardDescription>
                 <Button
                   className="cursor-pointer w-full"
-                  onClick={() => createAccount.mutate()}
+                  onClick={() => heandelCreateAccount()}
                   disabled={createAccount.isPending}
                 >
-                  Done
+                  {createAccount.isPending ? "Creating..." : "Done"}
                 </Button>
               </CardDescription>
             ) : showOTP && Email ? (
-              <Button
-                className="cursor-pointer"
-                onClick={() => {
-                  OTPCheck.mutate();
-                }}
-                disabled={OTPCheck.isPending}
-              >
+              <Button className="cursor-pointer" disabled={OTPCheck.isPending}>
                 Verify
               </Button>
             ) : (
               <Button
                 className="cursor-pointer"
-                onClick={() => {
-                  emailformat();
-                }}
                 disabled={sendOtp.isPending}
+                onClick={emailformat}
               >
                 {sendOtp.isPending ? "Sending..." : "Request OTP"}
               </Button>
