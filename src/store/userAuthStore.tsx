@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { queryClient } from "../@core/@tanstack/queryClint";
+import { useNavigate } from "react-router-dom";
 
 type User = {
   userEmail: string;
@@ -18,6 +19,8 @@ type AuthState = {
   logout: () => void;
 };
 
+const navigate = useNavigate();
+
 export const userAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -33,7 +36,7 @@ export const userAuthStore = create<AuthState>()(
         queryClient.cancelQueries();
         queryClient.clear();
 
-        window.location.href = "/";
+        navigate("/");
       },
     }),
     {
