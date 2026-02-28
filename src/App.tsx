@@ -3,8 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { Toaster } from "./components/ui/sonner";
 import AuthLayout from "./@ui/@layouts/authlayout";
-import { AppLogin } from "./@ui/@components/appLogin";
-import { AppSignup } from "./@ui/@components/appSignup";
 
 import { NoAuthLayout } from "./@ui/@layouts/noAuthlayout";
 import { AppDashboard } from "./@ui/pages/appDashboard";
@@ -19,6 +17,8 @@ import {
   ProtectedAuthRoute,
   RoleProtectedRoute,
 } from "./@ui/utils/protectedRoute";
+import { NewAppLogin } from "./@ui/@components/newLogin";
+import { NewAppSignup } from "./@ui/@components/newSignup";
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function App() {
             index
             element={
               <ProtectedAuthRoute>
-                <AppLogin />
+                <NewAppLogin />
               </ProtectedAuthRoute>
             }
           />
@@ -40,7 +40,7 @@ function App() {
             path="create-new-account"
             element={
               <ProtectedAuthRoute>
-                <AppSignup />
+                <NewAppSignup />
               </ProtectedAuthRoute>
             }
           />
