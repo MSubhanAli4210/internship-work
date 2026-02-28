@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import {
   Sidebar,
@@ -29,7 +29,6 @@ export function AppSidebar() {
   const active = location.pathname;
   const {user} = userAuthStore();
   const logout = userAuthStore((state)=> state.logout);
-  const navigate = useNavigate();
 
   return (
     <Sidebar
@@ -153,7 +152,7 @@ export function AppSidebar() {
                     )}
                   >
                     <LogOutIcon size={20} />
-                   <button onClick={() => { logout(); navigate("/"); }}>Logout</button>
+                   <button onClick={() => { logout();}}>Logout</button>
                   </DropdownMenuItem>
                   </NavLink>
               </DropdownMenuContent>
