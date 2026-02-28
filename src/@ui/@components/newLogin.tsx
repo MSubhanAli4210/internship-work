@@ -11,63 +11,48 @@ import { Button } from "../../components/ui/button";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { lookUpApi } from "../../@core/api/api";
 import { userAuthStore } from "../../store/userAuthStore";
 
 export function NewAppLogin() {
   const [password, setpassword] = useState("");
   const [Email, setEmail] = useState("");
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
 
   const setUser = userAuthStore((state) => state.setUser);
 
-  const credentialsFormateCheck = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-    // Email check
-    if (!Email) {
-      return toast.error("Please enter an email", { richColors: true });
-    }
+const handleLogin = async () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-    if (!emailRegex.test(Email)) {
-      return toast.error("Please enter a valid email format", {
-        richColors: true,
-      });
-    }
+  if (!Email) return toast.error("Please enter an email", { richColors: true });
+  if (!emailRegex.test(Email)) return toast.error("Enter a valid email", { richColors: true });
+  if (!password) return toast.error("Please enter a password", { richColors: true });
+  if (!passwordRegex.test(password)) return toast.error("Use 6+ chars, including a letter and number", { richColors: true });
 
-    // Password check
-    if (!password) {
-      return toast.error("Please enter a password", { richColors: true });
-    }
+  try {
+    setloading(true);
+    const res = await lookUpApi({ email: Email, password });
+    const user = res?.data?.user;
 
-    if (!passwordRegex.test(password)) {
-      return toast.error("Use 6+ chars, including a letter and number", {
-        richColors: true,
-      });
-    }
+    if (!user) return toast.error(res?.data?.message || "Invalid credentials", { richColors: true });
 
-    passwordCheck.mutate();
-  };
+    setUser(user, res?.data?.token);
+    toast.success("Login successful!", { richColors: true });
+    navigate("/dashboard");
 
-  const passwordCheck = useMutation({
-    mutationFn: async () => {
-      return await lookUpApi({
-        email: Email,
-        password: password,
-      });
-    },
-    onSuccess: (res) => {
-      toast.success("Verified", { richColors: true });
-
-      setUser(res?.data.user, res?.data.token);
-      navigate("/dashboard");
-    },
-    onError: () => {
-      toast.error("Invalid Password", { richColors: true });
-    },
-  });
+  } catch (err: any) {
+    const message =
+      err?.response?.data?.message ||
+      `Request failed with status ${err?.response?.status || "unknown"}`;
+    toast.error(message, { richColors: true });
+  }
+  finally{
+    setloading(false);
+  }
+};
 
   return (
     <>
@@ -92,7 +77,7 @@ export function NewAppLogin() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  credentialsFormateCheck();
+                    handleLogin();
                 }
               }}
             />
@@ -106,7 +91,7 @@ export function NewAppLogin() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  credentialsFormateCheck();
+                  handleLogin();
                 }
               }}
             />
@@ -114,12 +99,12 @@ export function NewAppLogin() {
           <CardContent className="flex flex-col gap-2">
             <Button
               className="cursor-pointer"
-              disabled={passwordCheck.isPending}
+              disabled={loading}
               onClick={() => {
-                passwordCheck.mutate();
+                handleLogin();
               }}
             >
-              {passwordCheck.isPending ? "Logging in..." : "Login"}
+              {loading ? "Logging in..." : "Login"}
             </Button>
             <CardDescription className="self-center">or</CardDescription>
             <Button className="cursor-pointer">Login with Google</Button>
