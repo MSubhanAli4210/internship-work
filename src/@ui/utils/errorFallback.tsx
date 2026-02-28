@@ -13,7 +13,7 @@ export function ErrorFallback({ error }: any) {
         <p className="text-gray-700 mb-4">
           We encountered an unexpected error. Our team has been notified.
         </p>
-        <p className="text-gray-500 text-sm break-words mb-6">
+        <p className="text-gray-500 text-sm mb-6">
           {error?.message || "Unknown error"}
         </p>
         <button
